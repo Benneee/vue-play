@@ -88,3 +88,7 @@ textarea {
   color: #16c0b0;
   text-decoration: underline;
 }
+
+.outOfStock {
+  text-decoration: line-through;
+}

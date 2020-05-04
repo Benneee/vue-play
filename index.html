@@ -11,7 +11,7 @@
     <div id="app">
       <div class="product">
         <div class="product-image">
-          <!-- v-bind directive creates a bond between the data and the attribute we need to manipulate 
+          <!-- v-bind directive creates a bond between the data and the attribute we need to manipulate
           short-form is ':'-->
           <img :src="image" :alt="description" />
         </div>
@@ -19,26 +19,34 @@
         <div class="product-info">
           <h1>{{ product }}</h1>
           <p v-if="inStock">In Stock</p>
-          <p v-else>Out of Stock</p>
+          <p v-else :class="{outOfStock: !inStock}">
+            Out of Stock
+          </p>
 
           <ul>
             <li v-for="detail in details">{{ detail }}</li>
           </ul>
 
-          <div v-for="variant in variants" :key="variant.variantId">
-            <p
-              @mouseover="updateProduct(variant.variantImage)"
-              style="cursor: grab;"
-            >
-              {{ variant?.variantColor }}
-            </p>
-          </div>
+          <div
+            v-for="variant in variants"
+            :key="variant.variantId"
+            class="color-box"
+            :style="{ backgroundColor: variant?.variantColor }"
+            @mouseover="updateProduct(variant.variantImage)"
+            style="cursor: grab;"
+          ></div>
 
-          <button v-on:click="addToCart">Add to Cart</button>
-          <br />
+          <button
+            v-on:click="addToCart"
+            :disabled="!inStock"
+            :class="{disabledButton: !inStock}"
+          >
+            Add to Cart
+          </button>
+          <!-- <br />
           <button :disabled="cart === 0" v-on:click="reduceCart">
             Remove From Cart
-          </button>
+          </button> -->
           <div class="cart">
             <p>Cart({{ cart }})</p>
           </div>

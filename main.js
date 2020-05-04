@@ -5,7 +5,7 @@ var app = new Vue({
     description: 'Most amazing pair ever designed!',
     image: './assets/vue-socks-green.jpg',
     url: 'https://google.com',
-    inStock: true,
+    inStock: false,
     inventory: 8,
     onSale: true,
     details: ['60% cotton', '20% polyester', 'Gender-neutral'],
