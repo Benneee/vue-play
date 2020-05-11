@@ -43,14 +43,13 @@ Vue.component('product', {
       >
         Add to Cart
       </button>
-      <!-- <br />
-      <button :disabled="cart === 0" v-on:click="reduceCart">
+      <br />
+      <button v-on:click="removeFromCart">
         Remove From Cart
-      </button> -->
-      <div class="cart">
-        <p>Cart({{ cart }})</p>
-      </div>
+      </button>
     </div>
+  <br /> <br />
+    <product-review @review-submitted="addReview"></product-review>
 
   </div>
 `,
@@ -80,23 +79,28 @@ Vue.component('product', {
           variantQuantity: 0,
         },
       ],
-      cart: 0,
+      reviews: [],
       sizes: ['small', 'medium', 'large'],
     };
   },
   methods: {
-    addToCart: function () {
-      this.cart += 1;
+    addToCart() {
+      this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId);
     },
     /**
      * Anonymous functions can also be written as below but not all browsers supports it
-     *
      */
     updateProduct(index) {
       this.selectedVariant = index;
     },
-    reduceCart() {
-      this.cart -= 1;
+    removeFromCart() {
+      this.$emit(
+        'remove-from-cart',
+        this.variants[this.selectedVariant].variantId,
+      );
+    },
+    addReview(productReview) {
+      this.reviews.push(productReview);
     },
   },
   computed: {
@@ -124,24 +128,90 @@ Vue.component('product', {
   },
 });
 
-Vue.component('product-details', {
-  props: {
-    details: {
-      type: Number,
-      required: true,
+// Vue.component('product-details', {
+//   props: {
+//     details: {
+//       type: Number,
+//       required: true,
+//     },
+//   },
+//   template: `
+//     <div>
+//       {{ details }}
+//     </div>
+//   `,
+// });
+
+Vue.component('product-review', {
+  template: `
+      <form class="review-form" @submit.prevent="onSubmit">
+      <p>
+        <label for="name">Name:</label>
+        <input id="name" v-model="name" placeholder="name">
+      </p>
+
+      <p>
+        <label for="review">Review:</label>
+        <textarea id="review" v-model="review"></textarea>
+      </p>
+
+      <p>
+        <label for="rating">Rating:</label>
+        <select id="rating" v-model.number="rating">
+          <option>5</option>
+          <option>4</option>
+          <option>3</option>
+          <option>2</option>
+          <option>1</option>
+        </select>
+      </p>
+
+      <p>
+        <input type="submit" value="Submit">
+      </p>
+
+    </form>
+
+  `,
+
+  data() {
+    return {
+      name: null,
+      review: null,
+      rating: null,
+    };
+  },
+  methods: {
+    onSubmit() {
+      let productReview = {
+        name: this.name,
+        review: this.review,
+        rating: this.rating,
+      };
+      this.$emit('review-submitted', productReview);
+      this.name = null;
+      this.review = null;
+      this.rating = null;
     },
   },
-  template: `
-    <div>
-      {{ details }}
-    </div>
-  `,
 });
 
 var app = new Vue({
   el: '#app',
   data: {
+    cart: [],
     premium: false,
-    details: 30,
+    // details: 30,
+  },
+  methods: {
+    updateCart(id) {
+      this.cart.push(id);
+    },
+    reduceCart(id) {
+      const index = this.cart.indexOf(id);
+      if (index > -1) {
+        this.cart.splice(index, 1);
+      }
+    },
   },
 });
